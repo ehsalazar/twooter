@@ -1,64 +1,35 @@
 class TwootsController < ApplicationController
   before_action :set_twoot, only: [:show, :edit, :update, :destroy]
 
-  # GET /twoots
-  # GET /twoots.json
-  def index
-    @twoots = Twoot.all
+  def recent
+    Twoot.ordered_json
+    twoots = Twoot.ordered_json
+    render json: twoots
   end
 
-  # GET /twoots/1
-  # GET /twoots/1.json
-  def show
+  def search
+    hashtag = Hashtag.where(name: params[:keyword]).first
+    if hashtag
+      render json: hashtag.twoots.ordered_json
+    else
+      render :nothing => true, status: 404
+    end
   end
 
-  # GET /twoots/new
-  def new
-    @twoot = Twoot.new
-  end
-
-  # GET /twoots/1/edit
-  def edit
-  end
-
-  # POST /twoots
-  # POST /twoots.json
   def create
-    @twoot = Twoot.new(twoot_params)
+    twoot = Twoot.new(params[:twoot])
+    twoot.content ||= Faker::Lorem.sentence
+    twoot.username ||= Faker::Name.name
+    twoot.handle ||= "@" + Faker::Internet.user_name
+    twoot.avatar_url ||= Faker::Avatar.image(twoot.username)
+    twoot.save
 
-    respond_to do |format|
-      if @twoot.save
-        format.html { redirect_to @twoot, notice: 'Twoot was successfully created.' }
-        format.json { render :show, status: :created, location: @twoot }
-      else
-        format.html { render :new }
-        format.json { render json: @twoot.errors, status: :unprocessable_entity }
-      end
+    hashtags_names = params[:hashtags] || []
+    hashtags_names.each do |name|
+      twoot.hashtags << Hashtag.first_or_create(name: name)
     end
-  end
 
-  # PATCH/PUT /twoots/1
-  # PATCH/PUT /twoots/1.json
-  def update
-    respond_to do |format|
-      if @twoot.update(twoot_params)
-        format.html { redirect_to @twoot, notice: 'Twoot was successfully updated.' }
-        format.json { render :show, status: :ok, location: @twoot }
-      else
-        format.html { render :edit }
-        format.json { render json: @twoot.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /twoots/1
-  # DELETE /twoots/1.json
-  def destroy
-    @twoot.destroy
-    respond_to do |format|
-      format.html { redirect_to twoots_url, notice: 'Twoot was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    render json: twoot.to_json(methods: :hashtag_names)
   end
 
   private
