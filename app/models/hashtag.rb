@@ -1,5 +1,5 @@
 class Hashtag < ActiveRecord::Base
   validates :name, uniqueness: true
-  has_many :twoot_tags
-  has_many :twoots, through: :twoot_tags
+  has_many :twoots_tags
+  has_many :twoots, through: :twoots_tags
 end
