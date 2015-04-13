@@ -69,6 +69,6 @@ class TwootsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def twoot_params
-      params.require(:twoot).permit(:body)
+      params.require(:twoot).permit(:body, :username, :handle, :avatar_url)
     end
 end
