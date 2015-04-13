@@ -17,8 +17,8 @@ class TwootsController < ApplicationController
   end
 
   def create
-    twoot = Twoot.new(params[:twoot])
-    twoot.content ||= Faker::Lorem.sentence
+    twoot = Twoot.new(twoot_params)
+    twoot.body ||= Faker::Lorem.sentence
     twoot.username ||= Faker::Name.name
     twoot.handle ||= "@" + Faker::Internet.user_name
     twoot.avatar_url ||= Faker::Avatar.image(twoot.username)
