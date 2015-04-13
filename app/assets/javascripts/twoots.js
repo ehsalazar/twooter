@@ -39,20 +39,20 @@ function updateRiver ( data ) {
   $('#tweets-container').append(template({tweets: data}))
 }
 
-// --- grab hashtags
-function popularHashtags () {
-  var request = $.ajax({
-    url: "/hashtags/popular",
-    type: "GET"
-  }).done(updateHashtags)
-}
+// // --- grab hashtags
+// function popularHashtags () {
+//   var request = $.ajax({
+//     url: "/hashtags/popular",
+//     type: "GET"
+//   }).done(updateHashtags)
+// }
 
-// --- append hashtags
-function updateHashtags ( data ) {
-  var source   = $("#trends-template").html();
-  var template = Handlebars.compile(source);
-  $('#trends-container').append(template({hashtags: data}))
-}
+// // --- append hashtags
+// function updateHashtags ( data ) {
+//   var source   = $("#trends-template").html();
+//   var template = Handlebars.compile(source);
+//   $('#trends-container').append(template({hashtags: data}))
+// }
 
 
 
