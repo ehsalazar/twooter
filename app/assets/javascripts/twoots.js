@@ -1,65 +1,102 @@
-// Ready... set... go
+// mvc for create a tweet (part of river? with own view)
+
 $( document ).ready(function () {
-  init()
+  var riverView       = new RiverView ();
+  var riverController = new RiverController ( riverView );
+  riverController.start();
+
+  var hashView        = new HashtagView ();
+  var hashController  = new HashtagController ( hashView );
+  hashController.start();
+
+  var tweetBoxView    =  new TweetBoxView ();
+  var tweetBoxController = new TweetBoxController ( tweetBoxView );
+  tweetBoxController.init(); // event listenter
 })
 
-function init () {
-  recentTweets();
-  popularHashtags();
-  bindEventListeners();
+// === River Controller ===================================
+function RiverController ( view ) {
+  this.view = view;
 }
 
-// view for create a tweet
-function bindEventListeners() {
-  $("#tweet-form").on("submit", createTweet)
+RiverController.prototype = {
+  start: function () {
+    var request = $.ajax({
+      url: "/twoots/recent",
+      type: "GET"
+    }).done( this.view.render )
+  }
 }
 
-// --- Grab Recent Tweets
-function recentTweets () {
-  var request = $.ajax({
-    url: "/twoots/recent",
-    type: "GET"
-  }).done(updateRiver)
+// === River View =========================================
+function RiverView () {
 }
 
-// --- Make Tweet
-function createTweet(event) {
-  // event.preventDefault()
-  var post = $.ajax({
-    url: "/twoots",
-    type: "POST",
-    data: { tweet: {'content': this[0].value } }
-  }).done(updateRiver)
+RiverView.prototype = {
+  render: function ( data ) {
+    var source = $( "#tweets-template" ).html();
+    var template = Handlebars.compile( source )
+    $( '#tweets-collection' ).append( template ({ twoots: data }))
+  }
 }
 
-// --- Update Tweet River (for make and grab recent)
-function updateRiver ( data ) {
-  var source   = $("#tweets-template").html();
-  var template = Handlebars.compile(source);
-  $('#tweets-container').append(template({tweets: data}))
+// === Hashtag Controller =================================
+function HashtagController( view ) {
+  this.view = view;
 }
 
-// // --- grab hashtags
-// function popularHashtags () {
-//   var request = $.ajax({
-//     url: "/hashtags/popular",
-//     type: "GET"
-//   }).done(updateHashtags)
-// }
+HashtagController.prototype = {
+  start: function () {
+    var request = $.ajax({
+      url: "/hashtags/popular",
+      type: "GET"
+    }).done( this.view.render )
+  }
+}
 
-// // --- append hashtags
-// function updateHashtags ( data ) {
-//   var source   = $("#trends-template").html();
-//   var template = Handlebars.compile(source);
-//   $('#trends-container').append(template({hashtags: data}))
-// }
+// === Hashtag View =======================================
+function HashtagView () {
+}
 
+HashtagView.prototype = {
+  render: function ( data ) {
+    var source = $( "#trends-template" ).html();
+    var template = Handlebars.compile( source );
+    $('#trends-container').append( template ({ hashtags: data }) )
+  }
+}
 
+// === TweetBox Controller ================================
+function TweetBoxController ( view ) {
+  this.view = view
+  var self = this
 
+  this.init = function () {
+    $("#tweet-form").on("submit", this.create)
+  },
 
+  this.create = function ( event ) {
+    event.preventDefault();
+    var post = $.ajax({
+      url: "/twoots",
+      type: "POST",
+      data: { twoot: { 'body': this[0].value } }
+    }).done( self.view.render )
+  }
+}
 
+// === TweetBox View ======================================
+function TweetBoxView() {
+}
 
-
+TweetBoxView.prototype = {
+  render: function ( data ) {
+    var source = $( "#single-tweets-template" ).html();
+    var template = Handlebars.compile( source )
+    $( '#tweets-collection' ).prepend( template ( data ))
+    $( '#new-tweet' ).val("")
+  }
+}
 
 
 
