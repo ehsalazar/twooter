@@ -1,0 +1,74 @@
+<header id="top-nav">
+  <div id="brand">Lil' Twitter API</div>
+  <form id="search-form">
+    <input id="search" type="text" name="query">
+  </form>
+  <i class="fa fa-search"></i>
+</header>
+<section class="container">
+  <section id="tweet-box">
+    <p id="tweet-box-title">Compose New Tweet</p>
+    <form id="tweet-form">
+      <textarea id="new-tweet" cols="30" rows="5" maxlength="140" name="tweet"></textarea>
+      <input type="submit" value="Tweet">
+    </form>
+  </section>
+  <section id="trends-container">
+    <h3>Trends</h3>
+    <!--  -->
+    <script id="trends-template" type="text/x-handlebars-template">
+      <ul>
+        {{#each hashtags}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </script>
+    <!--  -->
+  </section>
+  <section id="tweets-container">
+    <h3>Tweets</h3>
+    <ul id="tweets-collection">
+    <!-- start of Handlebars for new tweets -->
+    <script id="single-tweets-template" type="text/x-handlebars-template">
+      <li class="tweet">
+        <img class="avatar" src={{this.avatar_url}} alt="">
+        <div class="tweet-content">
+          <p>
+          <span class="full-name">{{this.username}}</span>
+          <span class="username">{{this.handle}}</span>
+          <span class="timestamp">{{this.created_at}}</span>
+          </p>
+          <p>
+            {{this.content}}<br>
+            Hashtags#: <i>{{this.hashtag_names}}</i>
+          </p>
+        </div>
+      </li>
+    </script>
+    <!-- end of Handlebars for new tweets -->
+    <!-- start of Handlebars for recent tweets -->
+    <script id="tweets-template" type="text/x-handlebars-template">
+      {{#each tweets}}
+      <li class="tweet">
+        <img class="avatar" src={{this.avatar_url}} alt="">
+        <div class="tweet-content">
+          <p>
+          <span class="full-name">{{this.username}}</span>
+          <span class="username">{{this.handle}}</span>
+          <span class="timestamp">{{this.created_at}}</span>
+          </p>
+          <p>
+            {{this.content}}<br>
+            Hashtags#: <i>{{this.hashtag_names}}</i>
+          </p>
+        </div>
+      </li>
+    {{/each}}
+    </script>
+    <!-- end of Handlebars for recent tweets -->
+    </ul>
+  </section>
+</section>
+
+
+
