@@ -1,7 +1,16 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+50.times do
+  Hashtag.create( name: Faker::Lorem.word )
+end
+
+hashtag_count = Hashtag.count
+
+500.times do
+  internet_name = Faker::Internet.user_name
+  twoot = Twoot.create( content: Faker::Lorem.sentence,
+                        username: Faker::Name.name,
+                        handle: "@#{internet_name}",
+                        avatar_url: Faker::Avatar.image(internet_name) )
+  rand(1..4).times do
+    twoot.hashtags << Hashtag.where(id: rand(1..hashtag_count) )
+  end
+end
