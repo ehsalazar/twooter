@@ -12,6 +12,11 @@ $( document ).ready(function () {
   var tweetBoxView    =  new TweetBoxView ();
   var tweetBoxController = new TweetBoxController ( tweetBoxView );
   tweetBoxController.init(); // event listenter
+
+  var searchBarView   = new SearchBarView ();
+  var searchBarBinder = new SearchBarBinder ();
+  var searchBarController = new SearchBarController ( searchBarView, searchBarBinder );
+  searchBarController.init();
 })
 
 // === River Controller ===================================
@@ -98,9 +103,48 @@ TweetBoxView.prototype = {
   }
 }
 
+// === SearchBar Controller ===============================
+function SearchBarController ( view, binder ) {
+  this.view = view;
+  this.binder = binder;
+  var self = this
 
+  this.init = function () {
+    this.binder.bind(this)
+    $(document).on('TweetSearchError',this.render)
+  }
 
+  this.update = function (query) {
+    self.view.render()
+    $(document).trigger('TweetSearch',[query])
+    debugger
+  }
 
+  this.render = function () {
+    self.view.renderError()
+  }
+}
 
+// === SearchBar View =====================================
+function SearchBarView () {
+  this.render = function () {
+    $('#search').removeClass('error')
+    $('#search').val("")
+  }
+
+  this.renderError = function () {
+    $('#search').addClass('error')
+  }
+}
+
+// === SearchBar Binder ===================================
+function SearchBarBinder () {
+  this.bind = function (controller) {
+    $('#search-form').on('submit', function(event) {
+      event.preventDefault()
+      controller.update(this["query"].value)
+    })
+  }
+}
 
 
